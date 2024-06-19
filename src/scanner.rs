@@ -1,4 +1,5 @@
 use std::iter::Peekable;
+use std::str::Chars;
 
 #[derive(Debug, PartialEq)]
 pub enum TokenType {
@@ -50,7 +51,7 @@ pub enum TokenType {
 
 #[derive(Debug)]
 pub struct Scanner<'a> {
-    source: Peekable<std::str::Chars<'a>>,
+    source: Peekable<Chars<'a>>,
     tokens: Vec<TokenType>,
     line: usize,
 }
@@ -328,55 +329,57 @@ pub fn scan(source: &str) -> Scanner {
 mod tests {
     use super::*;
 
+    macro_rules! assert_token {
+        ($scanner:expr, $index:expr, $token:expr) => {
+            assert_eq!($scanner.tokens[$index], $token);
+        };
+    }
     #[test]
     fn test_scan() {
         let source = "( ) { } , . - + ; * ! != = == > >= < <= identifier \"string\" 123.45 and class else false fun for if nil or print return super this true var while\n // comment\n 1/3";
         let scanner = scan(source);
         println!("{:?}", scanner.tokens);
         assert_eq!(scanner.tokens.len(), 41);
-        assert_eq!(scanner.tokens[0], TokenType::LeftParen);
-        assert_eq!(scanner.tokens[1], TokenType::RightParen);
-        assert_eq!(scanner.tokens[2], TokenType::LeftBrace);
-        assert_eq!(scanner.tokens[3], TokenType::RightBrace);
-        assert_eq!(scanner.tokens[4], TokenType::Comma);
-        assert_eq!(scanner.tokens[5], TokenType::Dot);
-        assert_eq!(scanner.tokens[6], TokenType::Minus);
-        assert_eq!(scanner.tokens[7], TokenType::Plus);
-        assert_eq!(scanner.tokens[8], TokenType::Semicolon);
-        assert_eq!(scanner.tokens[9], TokenType::Star);
-        assert_eq!(scanner.tokens[10], TokenType::Bang);
-        assert_eq!(scanner.tokens[11], TokenType::BangEqual);
-        assert_eq!(scanner.tokens[12], TokenType::Equal);
-        assert_eq!(scanner.tokens[13], TokenType::EqualEqual);
-        assert_eq!(scanner.tokens[14], TokenType::Greater);
-        assert_eq!(scanner.tokens[15], TokenType::GreaterEqual);
-        assert_eq!(scanner.tokens[16], TokenType::Less);
-        assert_eq!(scanner.tokens[17], TokenType::LessEqual);
-        assert_eq!(
-            scanner.tokens[18],
-            TokenType::Identifier("identifier".to_string())
-        );
-        assert_eq!(scanner.tokens[19], TokenType::String("string".to_string()));
-        assert_eq!(scanner.tokens[20], TokenType::Number(123.45));
-        assert_eq!(scanner.tokens[21], TokenType::And);
-        assert_eq!(scanner.tokens[22], TokenType::Class);
-        assert_eq!(scanner.tokens[23], TokenType::Else);
-        assert_eq!(scanner.tokens[24], TokenType::False);
-        assert_eq!(scanner.tokens[25], TokenType::Fun);
-        assert_eq!(scanner.tokens[26], TokenType::For);
-        assert_eq!(scanner.tokens[27], TokenType::If);
-        assert_eq!(scanner.tokens[28], TokenType::Nil);
-        assert_eq!(scanner.tokens[29], TokenType::Or);
-        assert_eq!(scanner.tokens[30], TokenType::Print);
-        assert_eq!(scanner.tokens[31], TokenType::Return);
-        assert_eq!(scanner.tokens[32], TokenType::Super);
-        assert_eq!(scanner.tokens[33], TokenType::This);
-        assert_eq!(scanner.tokens[34], TokenType::True);
-        assert_eq!(scanner.tokens[35], TokenType::Var);
-        assert_eq!(scanner.tokens[36], TokenType::While);
-        assert_eq!(scanner.tokens[37], TokenType::Number(1.0));
-        assert_eq!(scanner.tokens[38], TokenType::Slash);
-        assert_eq!(scanner.tokens[39], TokenType::Number(3.0));
-        assert_eq!(scanner.tokens[40], TokenType::Eof);
+        assert_token!(scanner, 0, TokenType::LeftParen);
+        assert_token!(scanner, 1, TokenType::RightParen);
+        assert_token!(scanner, 2, TokenType::LeftBrace);
+        assert_token!(scanner, 3, TokenType::RightBrace);
+        assert_token!(scanner, 4, TokenType::Comma);
+        assert_token!(scanner, 5, TokenType::Dot);
+        assert_token!(scanner, 6, TokenType::Minus);
+        assert_token!(scanner, 7, TokenType::Plus);
+        assert_token!(scanner, 8, TokenType::Semicolon);
+        assert_token!(scanner, 9, TokenType::Star);
+        assert_token!(scanner, 10, TokenType::Bang);
+        assert_token!(scanner, 11, TokenType::BangEqual);
+        assert_token!(scanner, 12, TokenType::Equal);
+        assert_token!(scanner, 13, TokenType::EqualEqual);
+        assert_token!(scanner, 14, TokenType::Greater);
+        assert_token!(scanner, 15, TokenType::GreaterEqual);
+        assert_token!(scanner, 16, TokenType::Less);
+        assert_token!(scanner, 17, TokenType::LessEqual);
+        assert_token!(scanner, 18, TokenType::Identifier("identifier".to_string()));
+        assert_token!(scanner, 19, TokenType::String("string".to_string()));
+        assert_token!(scanner, 20, TokenType::Number(123.45));
+        assert_token!(scanner, 21, TokenType::And);
+        assert_token!(scanner, 22, TokenType::Class);
+        assert_token!(scanner, 23, TokenType::Else);
+        assert_token!(scanner, 24, TokenType::False);
+        assert_token!(scanner, 25, TokenType::Fun);
+        assert_token!(scanner, 26, TokenType::For);
+        assert_token!(scanner, 27, TokenType::If);
+        assert_token!(scanner, 28, TokenType::Nil);
+        assert_token!(scanner, 29, TokenType::Or);
+        assert_token!(scanner, 30, TokenType::Print);
+        assert_token!(scanner, 31, TokenType::Return);
+        assert_token!(scanner, 32, TokenType::Super);
+        assert_token!(scanner, 33, TokenType::This);
+        assert_token!(scanner, 34, TokenType::True);
+        assert_token!(scanner, 35, TokenType::Var);
+        assert_token!(scanner, 36, TokenType::While);
+        assert_token!(scanner, 37, TokenType::Number(1.0));
+        assert_token!(scanner, 38, TokenType::Slash);
+        assert_token!(scanner, 39, TokenType::Number(3.0));
+        assert_token!(scanner, 40, TokenType::Eof);
     }
 }
